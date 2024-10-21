@@ -8,8 +8,9 @@ import {
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase.config"; // Adjust the path according to your file structure
 import Login from "./Login";
-import SignUp from "./SignUp";
+
 import TVComponent from "./TVComponent";
+import SignUp from "./SignUp";
 
 const App = () => {
   const [user, setUser] = useState(null); // State to track the authenticated user
