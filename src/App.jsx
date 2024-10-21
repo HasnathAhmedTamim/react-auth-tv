@@ -10,7 +10,7 @@ import { auth } from "./firebase.config"; // Adjust the path according to your f
 import Login from "./Login";
 
 import TVComponent from "./TVComponent";
-import SignUp from ".../../../src/SignUp";
+import SignUp from "./SignUp";
 
 const App = () => {
   const [user, setUser] = useState(null); // State to track the authenticated user
