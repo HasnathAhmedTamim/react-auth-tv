@@ -1,4 +1,4 @@
-// src/Signup.jsx
+// src/SignUp.jsx
 
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
@@ -6,13 +6,13 @@ import { auth, googleProvider } from "./firebase.config"; // Import your Firebas
 import { useNavigate } from "react-router-dom"; // Import useNavigate for routing
 import Swal from "sweetalert2"; // Import SweetAlert2
 
-const Signup = () => {
+const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSignup = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setError(""); // Clear any previous errors
 
@@ -26,13 +26,13 @@ const Signup = () => {
         icon: "success",
         confirmButtonText: "OK",
       });
-      // Redirect to TV component after successful signup
+      // Redirect to TV component after successful SignUp
       navigate("/tv");
     } catch (err) {
       setError("Failed to create account. Please try again.");
       // Show error alert
       Swal.fire({
-        title: "Signup Failed!",
+        title: "SignUp Failed!",
         text: "Failed to create account. Please try again.",
         icon: "error",
         confirmButtonText: "OK",
@@ -40,7 +40,7 @@ const Signup = () => {
     }
   };
 
-  const handleGoogleSignup = async () => {
+  const handleGoogleSignUp = async () => {
     try {
       // Sign in with Google
       await signInWithPopup(auth, googleProvider);
@@ -51,14 +51,14 @@ const Signup = () => {
         icon: "success",
         confirmButtonText: "OK",
       });
-      // Redirect to TV component after successful signup
+      // Redirect to TV component after successful SignUp
       navigate("/tv");
     } catch (err) {
-      console.error("Google signup error: ", err);
+      console.error("Google SignUp error: ", err);
       setError("Failed to create account with Google. Please try again.");
       // Show error alert
       Swal.fire({
-        title: "Signup Failed!",
+        title: "SignUp Failed!",
         text: "Failed to create account with Google. Please try again.",
         icon: "error",
         confirmButtonText: "OK",
@@ -78,7 +78,7 @@ const Signup = () => {
 
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
 
-        <form onSubmit={handleSignup} className="space-y-6">
+        <form onSubmit={handleSignUp} className="space-y-6">
           <div className="relative">
             <input
               type="email"
@@ -112,7 +112,7 @@ const Signup = () => {
         <div className="text-center mt-6">
           <p className="text-gray-500">Or</p>
           <button
-            onClick={handleGoogleSignup}
+            onClick={handleGoogleSignUp}
             className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105 mt-4"
           >
             Sign Up with Google
@@ -132,4 +132,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignUp;

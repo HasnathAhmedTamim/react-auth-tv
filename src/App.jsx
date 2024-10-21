@@ -34,7 +34,7 @@ const App = () => {
         <Route path="/" element={<Navigate to="/login" />} />{" "}
         {/* Redirect root to /login */}
         <Route path="/login" element={<Login />} /> {/* Login route */}
-        <Route path="/signup" element={<SignUp />} /> {/* Sign-up route */}
+        <Route path="/SignUp" element={<SignUp />} /> {/* Sign-up route */}
         <Route
           path="/tv"
           element={user ? <TVComponent /> : <Navigate to="/login" />} // Protect TV route
