@@ -7,11 +7,14 @@ import {
 } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase.config"; // Adjust the path according to your file structure
-import Login from "./Login";
+
 import TVComponent from "./TVComponent";
-import SignUp from "./SignUp";
+
 import NotFound from "./NotFound"; // Import a 404 component
 import Loader from "./Loader"; // Import a loading spinner component
+import Login from "./auth/Login";
+import SignUp from "./auth/SignUp";
+
 
 const App = () => {
   const [user, setUser] = useState(null); // State to track the authenticated user
@@ -44,9 +47,9 @@ const App = () => {
         {/* Redirect root to /login */}
         <Route
           path="/login"
-          element={user ? <Navigate to="/tv" /> : <Login />} // Redirect authenticated users
+          element={user ? <Navigate to="/tv" /> : <Login></Login>} // Redirect authenticated users
         />
-        <Route path="/signup" element={<SignUp />} /> {/* Sign-up route */}
+        <Route path="/signup" element={<SignUp></SignUp>} /> {/* Sign-up route */}
         <Route
           path="/tv"
           element={user ? <TVComponent /> : <Navigate to="/login" />} // Protect TV route
