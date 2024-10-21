@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "./firebase.config"; // Import Google provider
+import { auth, googleProvider } from "./firebase.config";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -10,48 +10,59 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Swal.fire({
-        title: "Login Successful!",
-        text: "You have logged in successfully.",
+        title: "Logged In!",
+        text: "You have successfully logged in.",
         icon: "success",
         confirmButtonText: "OK",
       });
       navigate("/tv");
     } catch (err) {
-      setError("Invalid email or password.");
+      setError(err.message);
       Swal.fire({
         title: "Login Failed!",
-        text: "Invalid email or password.",
+        text: err.message,
         icon: "error",
         confirmButtonText: "OK",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
+    setLoading(true);
     try {
       await signInWithPopup(auth, googleProvider);
       Swal.fire({
-        title: "Login Successful!",
-        text: "You have logged in with Google successfully.",
+        title: "Logged In!",
+        text: "You have successfully logged in with Google.",
         icon: "success",
         confirmButtonText: "OK",
       });
       navigate("/tv");
     } catch (err) {
-      console.error("Google login error: ", err);
+      console.error("Google Login error: ", err);
+      setError(err.message);
       Swal.fire({
         title: "Login Failed!",
-        text: "Could not log in with Google.",
+        text: err.message,
         icon: "error",
         confirmButtonText: "OK",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,9 +70,11 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
       <div className="bg-white p-8 rounded-3xl shadow-lg w-full max-w-md transition-all transform hover:scale-105 hover:shadow-2xl">
         <h2 className="text-4xl font-extrabold text-center text-red-800 mb-6">
-          Welcome Back
+          Login
         </h2>
-        <p className="text-center text-gray-500 mb-8">Login to your account</p>
+        <p className="text-center text-gray-500 mb-8">
+          Welcome back! Please log in to your account.
+        </p>
 
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
 
@@ -79,20 +92,28 @@ const Login = () => {
 
           <div className="relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-400 text-gray-700"
               placeholder="Password"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
           </div>
 
           <button
             type="submit"
             className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105"
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging In..." : "Login"}
           </button>
         </form>
 
@@ -101,15 +122,16 @@ const Login = () => {
           <button
             onClick={handleGoogleLogin}
             className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105 mt-4"
+            disabled={loading}
           >
-            Login with Google
+            {loading ? "Logging In..." : "Login with Google"}
           </button>
         </div>
 
         <div className="text-center mt-6">
           <p className="text-gray-500">
             Don't have an account?{" "}
-            <a href="/SignUp" className="text-purple-500 hover:underline">
+            <a href="/signup" className="text-purple-500 hover:underline">
               Sign up
             </a>
           </p>

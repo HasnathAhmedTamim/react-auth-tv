@@ -46,7 +46,7 @@ const TVComponent = () => {
         isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
       }`}
     >
-      <header className="flex justify-between items-center w-full p-4  shadow-md">
+      <header className="flex justify-between items-center w-full p-4 shadow-md">
         <h1 className="text-2xl font-bold">My TV</h1>
         <div className="flex items-center">
           <button

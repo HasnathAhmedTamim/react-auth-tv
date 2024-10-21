@@ -8,25 +8,33 @@ import {
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase.config"; // Adjust the path according to your file structure
 import Login from "./Login";
-
 import TVComponent from "./TVComponent";
 import SignUp from "./SignUp";
+import NotFound from "./NotFound"; // Import a 404 component
+import Loader from "./Loader"; // Import a loading spinner component
 
 const App = () => {
   const [user, setUser] = useState(null); // State to track the authenticated user
   const [loading, setLoading] = useState(true); // State to track loading status
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser); // Update user state
-      setLoading(false); // Set loading to false after checking auth state
-    });
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (currentUser) => {
+        setUser(currentUser); // Update user state
+        setLoading(false); // Set loading to false after checking auth state
+      },
+      (error) => {
+        console.error("Auth state change error: ", error); // Handle error if needed
+        setLoading(false); // Ensure loading is set to false in case of error
+      }
+    );
 
     return () => unsubscribe(); // Clean up the subscription on unmount
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Show loading indicator while checking auth state
+    return <Loader />; // Use a loading component
   }
 
   return (
@@ -34,12 +42,16 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />{" "}
         {/* Redirect root to /login */}
-        <Route path="/login" element={<Login />} /> {/* Login route */}
-        <Route path="/SignUp" element={<SignUp />} /> {/* Sign-up route */}
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/tv" /> : <Login />} // Redirect authenticated users
+        />
+        <Route path="/signup" element={<SignUp />} /> {/* Sign-up route */}
         <Route
           path="/tv"
           element={user ? <TVComponent /> : <Navigate to="/login" />} // Protect TV route
         />
+        <Route path="*" element={<NotFound />} /> {/* Handle 404 errors */}
       </Routes>
     </Router>
   );

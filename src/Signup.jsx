@@ -2,67 +2,67 @@
 
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "./firebase.config"; // Import your Firebase config and Google provider
-import { useNavigate } from "react-router-dom"; // Import useNavigate for routing
-import Swal from "sweetalert2"; // Import SweetAlert2
+import { auth, googleProvider } from "./firebase.config";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    setError(""); // Clear any previous errors
+    setError("");
+    setLoading(true);
 
     try {
-      // Create a new user with email and password
       await createUserWithEmailAndPassword(auth, email, password);
-      // Show success alert
       Swal.fire({
         title: "Account Created!",
         text: "You have successfully created an account.",
         icon: "success",
         confirmButtonText: "OK",
       });
-      // Redirect to TV component after successful SignUp
       navigate("/tv");
     } catch (err) {
-      setError("Failed to create account. Please try again.");
-      // Show error alert
+      setError(err.message);
       Swal.fire({
         title: "SignUp Failed!",
-        text: "Failed to create account. Please try again.",
+        text: err.message,
         icon: "error",
         confirmButtonText: "OK",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleSignUp = async () => {
+    setLoading(true);
     try {
-      // Sign in with Google
       await signInWithPopup(auth, googleProvider);
-      // Show success alert
       Swal.fire({
         title: "Account Created!",
         text: "You have successfully signed up with Google.",
         icon: "success",
         confirmButtonText: "OK",
       });
-      // Redirect to TV component after successful SignUp
       navigate("/tv");
     } catch (err) {
       console.error("Google SignUp error: ", err);
-      setError("Failed to create account with Google. Please try again.");
-      // Show error alert
+      setError(err.message);
       Swal.fire({
         title: "SignUp Failed!",
-        text: "Failed to create account with Google. Please try again.",
+        text: err.message,
         icon: "error",
         confirmButtonText: "OK",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,20 +92,28 @@ const SignUp = () => {
 
           <div className="relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-400 text-gray-700"
               placeholder="Password"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
           </div>
 
           <button
             type="submit"
             className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105"
+            disabled={loading}
           >
-            Sign Up
+            {loading ? "Creating..." : "Sign Up"}
           </button>
         </form>
 
@@ -114,8 +122,9 @@ const SignUp = () => {
           <button
             onClick={handleGoogleSignUp}
             className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105 mt-4"
+            disabled={loading}
           >
-            Sign Up with Google
+            {loading ? "Signing Up..." : "Sign Up with Google"}
           </button>
         </div>
 
